@@ -10,7 +10,7 @@ class BinDataGenerator():
     ----------
     ax : matplotlib.axes.Axes,
 
-    clf : any classifier with a `fit()` and `predict()` methods
+    clf : any classifier with `fit()` and `predict()` methods
 
     labels : int,
         The labels for each class in the dataset
@@ -78,7 +78,10 @@ class BinDataGenerator():
         """Trains the classifier on the data and plots the decision boundary"""
         if self.finished:
             return
-
+        if len(self.target) == 0:
+            self.ax.set_title('No data points were added')
+            plt.draw()
+            return
         self.finished = True
         X = np.array(self.data)
         y = np.array(self.target)
@@ -113,17 +116,12 @@ class EventHandler():
         self.gen = gen
 
     def onclick(self, event):
-        # print('click', event.button)
-        # print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-        #     ('double' if event.dblclick else 'single', event.button,
-        #     event.x, event.y, event.xdata, event.ydata))
         if event.button != ADD_POINT_KEY:
             return
 
         self.gen.add_point(event.xdata, event.ydata)
 
     def onpress(self, event):
-        # print('press', event.key)
         if event.key != NEXT_LABEL_BUTTON:
             return
         self.gen.next_class()
@@ -143,7 +141,7 @@ if __name__ == '__main__':
 
 
 
-    plt.show()
+    plt.show() # block here
 
     # detach event handlers
     fig.canvas.mpl_disconnect(btn_cid)
