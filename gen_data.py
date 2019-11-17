@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 from matplotlib.backend_bases import MouseButton
 
 class BinDataGenerator():
@@ -61,7 +61,7 @@ class BinDataGenerator():
         self.ax.scatter(x, y,
                      marker=self.markers[self.cur_class],
                      c=self.colors[self.labels[self.cur_class]])
-        plt.show()
+        plt.draw()
     
 
     def next_class(self):
@@ -71,6 +71,7 @@ class BinDataGenerator():
             return
         
         self.ax.set_title(f'Left-Click to add points for class {self.labels[self.cur_class]}\nPress {NEXT_LABEL_BUTTON!r} for next class')
+        plt.draw()
     
     
     def _finish(self):
@@ -78,7 +79,6 @@ class BinDataGenerator():
         if self.finished:
             return
 
-        # if 
         self.finished = True
         X = np.array(self.data)
         y = np.array(self.target)
@@ -95,7 +95,9 @@ class BinDataGenerator():
 
         cols = [self.colors[c] for c in pred]
         self.ax.scatter(grid[:, 0], grid[:, 1], marker='.', s=.5, c=cols)
-        plt.show()
+        self.ax.set_title('Classifier decision boundary')
+
+        plt.draw()
 
         # return {
         #     'ax': ax,
@@ -133,7 +135,7 @@ if __name__ == '__main__':
     ax.set_xlim(-10, 10)
 
     # create dataset generator and event handler
-    generator = BinDataGenerator(ax, LogisticRegression(solver='liblinear'))
+    generator = BinDataGenerator(ax, GaussianNB())
     eh = EventHandler(generator)
     # attach event handlers
     btn_cid = fig.canvas.mpl_connect('button_press_event', eh.onclick)
